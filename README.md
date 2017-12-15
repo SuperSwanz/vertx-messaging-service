@@ -65,7 +65,7 @@ For running the app, (IDE used here is Eclipse)
   "message": "success",
   "hasError": false,
   "data": {
-    "messageID": "<msg.1513336315325.vertxmail.3@10.1.10.113>",
+    "messageID": "<msg.1513336315325.vertxmail.3@XX.X.XX.XXXX>",
     "recipients": [
       "xxxxx@yyyyy.com",
       "xxxxx@yyyyy.com",
