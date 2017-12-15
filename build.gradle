@@ -1,0 +1,79 @@
+buildscript {
+	ext {
+		vertxVersion			=	"3.5.0"
+		logbackVersion		=	"1.2.3"
+		slf4jVersion			=	"1.5.25"
+		reflectionVersion	=	"0.9.11"
+		gradleVersion		=	"4.3.1"		
+		commonsLang3Version	=	"3.5"
+		sourceJavaVersion	=	"1.8"
+		targetJavaVersion	=	"1.8"
+	}
+}
+
+plugins {
+	id 'com.github.johnrengelman.shadow' version '2.0.1'
+	id 'java'
+	id 'eclipse'
+	id 'application'
+}
+
+repositories {
+	mavenLocal()
+	jcenter()
+	maven { url "https://plugins.gradle.org/m2/" }
+}
+
+mainClassName = 'com.messaging.api.ServiceLauncher'
+
+shadowJar {
+	baseName = 'vertx-messaging-service'
+	version = '0.0.1'
+	classifier = 'fat'
+	manifest {
+		attributes 'Main-Verticle': 'com.messaging.api.verticle.MainVerticle'
+	}
+	mergeServiceFiles {
+		include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+	}
+}
+
+sourceSets {
+    generated{
+        java.srcDir "${projectDir}/src/generated/java"
+    }
+}
+
+dependencies {
+    compile "io.vertx:vertx-web:${vertxVersion}",
+	    		"io.vertx:vertx-rx-java2:${vertxVersion}",
+	    	    "io.vertx:vertx-mail-client:${vertxVersion}",
+	    	    "ch.qos.logback:logback-classic:${logbackVersion}",
+	    	    "ch.qos.logback:logback-core:${logbackVersion}",
+	    	    "org.slf4j:slf4j-api:${slf4jVersion}",
+	    	    "org.apache.commons:commons-lang3:${commonsLang3Version}",
+	    	    "org.reflections:reflections:${reflectionVersion}"
+				
+	testCompile "io.vertx:vertx-unit:${vertxVersion}"		
+}
+
+compileJava {
+	targetCompatibility = sourceJavaVersion
+	sourceCompatibility = targetJavaVersion
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs += 'src/main/generated'
+    }
+  }
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = gradleVersion
+}
+
+run {
+	args = ['run', "com.messaging.api.verticle.MainVerticle", "--launcher-class=com.messaging.api.ServiceLauncher"]
+}
